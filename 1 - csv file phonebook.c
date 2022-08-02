@@ -1,4 +1,3 @@
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -81,12 +80,13 @@ void addEntry() {
         case 78:
         case 110:
             // if user does not want to add entry to existing file, break switch case and carry out rest of func
-            printf("entered no, creating new .csv file...\n");
+            // once entry is made, file export func will be called
+            printf("entered no, creating new .csv file...\n\n");
             break;
         case 89:
         case 121:
             // if user does want to add entry to existing file, call file import func and terminate this one
-            printf("entered yes, accessing current .csv files...\n");
+            printf("entered yes, accessing current .csv files...\n\n");
             importFile();
             exit(0);
         default:
@@ -107,18 +107,28 @@ void addEntry() {
 
     printf("weird bug: this line gets printed twice???: ");
     fgets(nameofarray, sizeof(nameofarray), stdin);
+
+    saveToFile();
 }
 
 void importFile() {
-    printf("file imported!\n");
+    printf("here is a list of all the .csv files in the program's directory:\n\n");
+
 }
 
 void saveToFile() {
+    printf("name your new file.\n");
+    printf("naming your file after an existing one will not work.\n");
+    printf("here is a list of all the .csv files in the program's directory:\n\n");
 
 }
 
 void deleteEntry() {
+    char nameofarray[32];
+    int value;
 
+    printf("the below fgets will get entirely ignored: ");
+    fgets(nameofarray, sizeof(nameofarray), stdin);
 }
 
 void editEntry() {
