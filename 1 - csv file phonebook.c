@@ -103,9 +103,12 @@ void addEntry() {
             }
     }
 
+    // there are multiple things wrong here:
+    // 1. as the rest of this function gets executed, the fgets below will be ignored and the func call below will not
+    // 2. after the bottom of this function is reached, everything below this point gets executed AGAIN for some reason.
     char nameofarray[32];
 
-    printf("weird bug: this line gets printed twice???: ");
+    printf("this gets printed twice!\n");
     fgets(nameofarray, sizeof(nameofarray), stdin);
 
     saveToFile();
