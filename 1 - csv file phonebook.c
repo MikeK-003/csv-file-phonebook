@@ -5,8 +5,8 @@
 // listing all functions down here
 void printStartMenu();
 void addEntry();
+void createNewFile();
 void importFile();
-void saveToFile();
 void deleteEntry();
 void editEntry();
 void lookUpEntry();
@@ -69,7 +69,7 @@ void printStartMenu() {
     }
 }
 
-// add entry, will also use importFile() and saveToFile()
+// add entry, will also use createNewFile() and importFile()
 void addEntry() {
     char nameofinput[32];
     char nameofchar;
@@ -85,10 +85,10 @@ void addEntry() {
     switch (nameofchar) {
         case 'n':
         case 'N':
-            // if user does not want to add entry to existing file, break switch case and carry out rest of func
-            // once entry is made, file export func will be called
+            // if user does not want to add entry to existing file, call new file create func and terminate this one
             printf("entered no, creating new .csv file...\n\n");
-            break;
+            createNewFile();
+            exit(0);
         case 'y':
         case 'Y':
             // if user does want to add entry to existing file, call file import func and terminate this one
@@ -99,11 +99,67 @@ void addEntry() {
             printf("invalid key, ");
             addEntry();
     }
+}
 
-    printf("this gets printed twice!\n");
+void createNewFile() {
+    char nameofinput[32];
+    int value;
+    struct entry new_entry;
+
+    printf("enter the name of the .csv file you wish to create, do not include the file extension: ");
     fgets(nameofinput, sizeof(nameofinput), stdin);
-    sscanf(nameofinput, "%c", &nameofchar);
+    nameofinput[strlen(nameofinput)-1] = '\0';
     fflush(stdin);
+
+    strcat(nameofinput, ".csv");
+
+    FILE *input_file;
+
+    // check if file currently exists
+    if (input_file = fopen(nameofinput, "r")) {
+        printf("this file currently exists, try again\n");
+        fclose(input_file);
+        createNewFile();
+    } else {
+        printf("no file conflict detected\n");
+        input_file = fopen(nameofinput, "a");
+    }
+
+    if (input_file == NULL) {
+        fprintf(stderr, "can't create the file!\n");
+        exit (8);
+    }
+
+    printf("new file created\n\n");
+
+    printf("enter a person's first and last name: ");
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    nameofinput[strlen(nameofinput)-1] = '\0';
+    strcpy(new_entry.name, nameofinput);
+    fflush(stdin);
+
+    printf("enter the person's town: ");
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    nameofinput[strlen(nameofinput)-1] = '\0';
+    strcpy(new_entry.town, nameofinput);
+    fflush(stdin);
+
+    printf("enter the person's state: ");
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    nameofinput[strlen(nameofinput)-1] = '\0';
+    strcpy(new_entry.state, nameofinput);
+    fflush(stdin);
+
+    printf("enter last four digits of the person's phone number: ");
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    sscanf(nameofinput, "%d", &value);
+    new_entry.last4digsphonenum = value;
+
+    fprintf(input_file, "full name,town,state,last4digsofphonenum\n");
+    fprintf(input_file, "%s,%s,%s,%d\n", new_entry.name, new_entry.town, new_entry.state, new_entry.last4digsphonenum);
+
+    printf("\na new entry has been added to the specified file\n");
+    fclose(input_file);
 }
 
 void importFile() {
@@ -111,7 +167,7 @@ void importFile() {
     int value;
     struct entry new_entry;
 
-    printf("enter the name of the .csv file you wish to edit: ");
+    printf("enter the name of the .csv file you wish to edit, do not include the file extension: ");
     fgets(nameofinput, sizeof(nameofinput), stdin);
     nameofinput[strlen(nameofinput)-1] = '\0';
     fflush(stdin);
@@ -155,13 +211,6 @@ void importFile() {
 
     printf("\na new entry has been added to the specified file\n");
     fclose(input_file);
-}
-
-void saveToFile() {
-    printf("name your new file.\n");
-    printf("naming your file after an existing one will not work.\n");
-    printf("here is a list of all the .csv files in the program's directory:\n\n");
-
 }
 
 void deleteEntry() {
