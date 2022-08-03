@@ -72,17 +72,17 @@ void printStartMenu() {
 // add entry, will also use createNewFile() and importFile()
 void addEntry() {
     char nameofinput[32];
-    char nameofchar;
+    char yesorno;
     int value;
     struct entry new_entry;
 
     printf("\nwould you like to add this entry to an existing file? Y/N: ");
 
     fgets(nameofinput, sizeof(nameofinput), stdin);
-    sscanf(nameofinput, "%c", &nameofchar);
+    sscanf(nameofinput, "%c", &yesorno);
     fflush(stdin);
 
-    switch (nameofchar) {
+    switch (yesorno) {
         case 'n':
         case 'N':
             // if user does not want to add entry to existing file, call new file create func and terminate this one
