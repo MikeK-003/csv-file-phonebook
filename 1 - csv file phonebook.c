@@ -76,28 +76,30 @@ void addEntry() {
     int value;
     struct entry new_entry;
 
-    printf("\nwould you like to add this entry to an existing file? Y/N: ");
+    while (1) {
+        printf("\nwould you like to add this entry to an existing file? Y/N: ");
 
-    fgets(nameofinput, sizeof(nameofinput), stdin);
-    sscanf(nameofinput, "%c", &yesorno);
-    fflush(stdin);
+        fgets(nameofinput, sizeof(nameofinput), stdin);
+        sscanf(nameofinput, "%c", &yesorno);
+        fflush(stdin);
 
-    switch (yesorno) {
-        case 'n':
-        case 'N':
-            // if user does not want to add entry to existing file, call new file create func and terminate this one
-            printf("entered no, creating new .csv file...\n\n");
-            createNewFile();
-            exit(0);
-        case 'y':
-        case 'Y':
-            // if user does want to add entry to existing file, call file import func and terminate this one
-            printf("entered yes, accessing current .csv files...\n\n");
-            importFile();
-            exit(0);
-        default:
-            printf("invalid key, ");
-            addEntry();
+        switch (yesorno) {
+            case 'n':
+            case 'N':
+                // if user does not want to add entry to existing file, call new file create func and terminate this one
+                printf("entered no, creating new .csv file...\n\n");
+                createNewFile();
+                exit(0);
+            case 'y':
+            case 'Y':
+                // if user does want to add entry to existing file, call file import func and terminate this one
+                printf("entered yes, accessing current .csv files...\n\n");
+                importFile();
+                exit(0);
+            default:
+                printf("invalid key\n");
+                continue;
+        }
     }
 }
 
@@ -105,24 +107,26 @@ void createNewFile() {
     char nameofinput[32];
     int value;
     struct entry new_entry;
-
-    printf("enter the name of the .csv file you wish to create, do not include the file extension: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
-    nameofinput[strlen(nameofinput)-1] = '\0';
-    fflush(stdin);
-
-    strcat(nameofinput, ".csv");
-
     FILE *input_file;
 
-    // check if file currently exists
-    if (input_file = fopen(nameofinput, "r")) {
-        printf("this file currently exists, try again\n\n");
-        fclose(input_file);
-        createNewFile();
-    } else {
-        printf("no file conflict detected\n\n");
-        input_file = fopen(nameofinput, "a");
+    while(1) {
+        printf("enter the name of the .csv file you wish to create, do not include the file extension: ");
+        fgets(nameofinput, sizeof(nameofinput), stdin);
+        nameofinput[strlen(nameofinput)-1] = '\0';
+        fflush(stdin);
+
+        strcat(nameofinput, ".csv");
+
+        // check if file currently exists
+        if (input_file = fopen(nameofinput, "r")) {
+            printf("this file currently exists, try again\n\n");
+            fclose(input_file);
+            continue;
+        } else {
+            printf("no file conflict detected\n\n");
+            input_file = fopen(nameofinput, "a");
+            break;
+        }
     }
 
     if (input_file == NULL) {
@@ -167,16 +171,26 @@ void importFile() {
     char nameofinput[32];
     int value;
     struct entry new_entry;
-
-    printf("enter the name of the .csv file you wish to edit, do not include the file extension: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
-    nameofinput[strlen(nameofinput)-1] = '\0';
-    fflush(stdin);
-
-    strcat(nameofinput, ".csv");
-
     FILE *input_file;
-    input_file = fopen(nameofinput, "a");
+
+    while (1) {
+        printf("enter the name of the .csv file you wish to edit, do not include the file extension: ");
+        fgets(nameofinput, sizeof(nameofinput), stdin);
+        nameofinput[strlen(nameofinput)-1] = '\0';
+        fflush(stdin);
+
+        strcat(nameofinput, ".csv");
+
+        // check if file currently exists
+        if (input_file = fopen(nameofinput, "r")) {
+            fclose(input_file);
+            input_file = fopen(nameofinput, "a");
+            break;
+        } else {
+            printf("this file is not in the directory, try again\n\n");
+            continue;
+        }
+    }
 
     if (input_file == NULL) {
         fprintf(stderr, "can't find the file!\n");
@@ -215,11 +229,7 @@ void importFile() {
 }
 
 void deleteEntry() {
-    char nameofinput[32];
-    int value;
 
-    printf("the below fgets will get entirely ignored: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
 }
 
 void editEntry() {
