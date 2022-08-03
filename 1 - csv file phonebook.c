@@ -28,7 +28,8 @@ int main() {
 
 // choices presented
 void printStartMenu() {
-    int choice;
+    char nameofarray[32];
+    int value;
 
     printf("-------------------------------------------------\n");
     printf("\tphone book program - enter a key\n");
@@ -42,9 +43,11 @@ void printStartMenu() {
     printf("press any other key: quit\n");
     printf("input choice: ");
 
-    scanf("%d", &choice);
+    fgets(nameofarray, sizeof(nameofarray), stdin);
+    sscanf(nameofarray, "%d", &value);
+    fflush(stdin);
 
-    switch (choice) {
+    switch (value) {
         case 1:
             addEntry();
             break;
@@ -68,50 +71,42 @@ void printStartMenu() {
 
 // add entry, will also use importFile() and saveToFile()
 void addEntry() {
-    char yesorno;
+    char nameofarray[32];
+    char nameofchar;
+    int value;
 
-    // for some reason whenever this function gets executed the default case gets activated immediately
-    // so i made this counter so "invalid key" is not printed the first time it gets executed
-    static int recursionCounter = 0;
+    printf("would you like to add this entry to an existing file? Y/N: ");
 
-    scanf("%c", &yesorno);
+    fgets(nameofarray, sizeof(nameofarray), stdin);
+    sscanf(nameofarray, "%c", &nameofchar);
+    fflush(stdin);
 
-    switch ((int)yesorno) {
-        case 78:
-        case 110:
+    switch (nameofchar) {
+        case 'n':
+        case 'N':
             // if user does not want to add entry to existing file, break switch case and carry out rest of func
             // once entry is made, file export func will be called
             printf("entered no, creating new .csv file...\n\n");
             break;
-        case 89:
-        case 121:
+        case 'y':
+        case 'Y':
             // if user does want to add entry to existing file, call file import func and terminate this one
             printf("entered yes, accessing current .csv files...\n\n");
             importFile();
             exit(0);
         default:
-            if (recursionCounter % 2 == 0) {
-                printf("would you like to add this entry to an existing file? Y/N: ");
-                recursionCounter++;
-                addEntry();
-                break;
-            } else {
-                printf("invalid key, ");
-                recursionCounter++;
-                addEntry();
-                break;
-            }
+            printf("invalid key, ");
+            addEntry();
     }
 
     // there are multiple things wrong here:
     // 1. as the rest of this function gets executed, the fgets below will be ignored and the func call below will not
     // 2. after the bottom of this function is reached, everything below this point gets executed AGAIN for some reason.
-    char nameofarray[32];
 
     printf("this gets printed twice!\n");
     fgets(nameofarray, sizeof(nameofarray), stdin);
-
-    saveToFile();
+    sscanf(nameofarray, "%c", &nameofchar);
+    fflush(stdin);
 }
 
 void importFile() {
