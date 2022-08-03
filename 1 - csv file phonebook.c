@@ -28,8 +28,8 @@ int main() {
 
 // choices presented
 void printStartMenu() {
-    char nameofarray[32];
-    int value;
+    char nameofinput[32];
+    int choice;
 
     printf("-------------------------------------------------\n");
     printf("\tphone book program - enter a key\n");
@@ -43,11 +43,11 @@ void printStartMenu() {
     printf("press any other key: quit\n");
     printf("input choice: ");
 
-    fgets(nameofarray, sizeof(nameofarray), stdin);
-    sscanf(nameofarray, "%d", &value);
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    sscanf(nameofinput, "%d", &choice);
     fflush(stdin);
 
-    switch (value) {
+    switch (choice) {
         case 1:
             addEntry();
             break;
@@ -71,14 +71,15 @@ void printStartMenu() {
 
 // add entry, will also use importFile() and saveToFile()
 void addEntry() {
-    char nameofarray[32];
+    char nameofinput[32];
     char nameofchar;
     int value;
+    struct entry new_entry;
 
-    printf("would you like to add this entry to an existing file? Y/N: ");
+    printf("\nwould you like to add this entry to an existing file? Y/N: ");
 
-    fgets(nameofarray, sizeof(nameofarray), stdin);
-    sscanf(nameofarray, "%c", &nameofchar);
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    sscanf(nameofinput, "%c", &nameofchar);
     fflush(stdin);
 
     switch (nameofchar) {
@@ -99,19 +100,61 @@ void addEntry() {
             addEntry();
     }
 
-    // there are multiple things wrong here:
-    // 1. as the rest of this function gets executed, the fgets below will be ignored and the func call below will not
-    // 2. after the bottom of this function is reached, everything below this point gets executed AGAIN for some reason.
-
     printf("this gets printed twice!\n");
-    fgets(nameofarray, sizeof(nameofarray), stdin);
-    sscanf(nameofarray, "%c", &nameofchar);
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    sscanf(nameofinput, "%c", &nameofchar);
     fflush(stdin);
 }
 
 void importFile() {
-    printf("here is a list of all the .csv files in the program's directory:\n\n");
+    char nameofinput[32];
+    int value;
+    struct entry new_entry;
 
+    printf("enter the name of the .csv file you wish to edit: ");
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    nameofinput[strlen(nameofinput)-1] = '\0';
+    fflush(stdin);
+
+    strcat(nameofinput, ".csv");
+
+    FILE *input_file;
+    input_file = fopen(nameofinput, "a");
+
+    if (input_file == NULL) {
+        fprintf(stderr, "can't find the file!\n");
+        exit (8);
+    }
+
+    printf("chosen file opened\n\n");
+
+    printf("enter a person's first and last name: ");
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    nameofinput[strlen(nameofinput)-1] = '\0';
+    strcpy(new_entry.name, nameofinput);
+    fflush(stdin);
+
+    printf("enter the person's town: ");
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    nameofinput[strlen(nameofinput)-1] = '\0';
+    strcpy(new_entry.town, nameofinput);
+    fflush(stdin);
+
+    printf("enter the person's state: ");
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    nameofinput[strlen(nameofinput)-1] = '\0';
+    strcpy(new_entry.state, nameofinput);
+    fflush(stdin);
+
+    printf("enter last four digits of the person's phone number: ");
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    sscanf(nameofinput, "%d", &value);
+    new_entry.last4digsphonenum = value;
+
+    fprintf(input_file, "%s,%s,%s,%d\n", new_entry.name, new_entry.town, new_entry.state, new_entry.last4digsphonenum);
+
+    printf("\na new entry has been added to the specified file\n");
+    fclose(input_file);
 }
 
 void saveToFile() {
@@ -122,11 +165,11 @@ void saveToFile() {
 }
 
 void deleteEntry() {
-    char nameofarray[32];
+    char nameofinput[32];
     int value;
 
     printf("the below fgets will get entirely ignored: ");
-    fgets(nameofarray, sizeof(nameofarray), stdin);
+    fgets(nameofinput, sizeof(nameofinput), stdin);
 }
 
 void editEntry() {
