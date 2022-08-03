@@ -117,11 +117,11 @@ void createNewFile() {
 
     // check if file currently exists
     if (input_file = fopen(nameofinput, "r")) {
-        printf("this file currently exists, try again\n");
+        printf("this file currently exists, try again\n\n");
         fclose(input_file);
         createNewFile();
     } else {
-        printf("no file conflict detected\n");
+        printf("no file conflict detected\n\n");
         input_file = fopen(nameofinput, "a");
     }
 
@@ -154,6 +154,7 @@ void createNewFile() {
     fgets(nameofinput, sizeof(nameofinput), stdin);
     sscanf(nameofinput, "%d", &value);
     new_entry.last4digsphonenum = value;
+    fflush(stdin);
 
     fprintf(input_file, "full name,town,state,last4digsofphonenum\n");
     fprintf(input_file, "%s,%s,%s,%d\n", new_entry.name, new_entry.town, new_entry.state, new_entry.last4digsphonenum);
