@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 // listing all functions down here
+void getInput();
 void printStartMenu();
 void addEntry();
 void createNewFile();
@@ -43,9 +44,8 @@ void printStartMenu() {
     printf("press any other key: quit\n");
     printf("input choice: ");
 
-    fgets(nameofinput, sizeof(nameofinput), stdin);
+    getInput(&nameofinput);
     sscanf(nameofinput, "%d", &choice);
-    fflush(stdin);
 
     switch (choice) {
         case 1:
@@ -79,9 +79,8 @@ void addEntry() {
     while (1) {
         printf("\nwould you like to add this entry to an existing file? Y/N: ");
 
-        fgets(nameofinput, sizeof(nameofinput), stdin);
+        getInput(&nameofinput);
         sscanf(nameofinput, "%c", &yesorno);
-        fflush(stdin);
 
         switch (yesorno) {
             case 'n':
@@ -112,9 +111,7 @@ void createNewFile() {
     while(1) {
         // to do, add support for inclusions of .csv or no
         printf("enter the name of the .csv file you wish to create\nsupported formats: asdf.csv = asdf.csv or asdf: ");
-        fgets(nameofinput, sizeof(nameofinput), stdin);
-        nameofinput[strlen(nameofinput)-1] = '\0';
-        fflush(stdin);
+        getInput(&nameofinput);
 
         strcat(nameofinput, ".csv");
 
@@ -138,28 +135,21 @@ void createNewFile() {
     printf("new file created\n\n");
 
     printf("enter a person's first and last name: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
-    nameofinput[strlen(nameofinput)-1] = '\0';
+    getInput(&nameofinput);
     strcpy(new_entry.name, nameofinput);
-    fflush(stdin);
 
     printf("enter the person's town: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
-    nameofinput[strlen(nameofinput)-1] = '\0';
+    getInput(&nameofinput);
     strcpy(new_entry.town, nameofinput);
-    fflush(stdin);
 
     printf("enter the person's state: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
-    nameofinput[strlen(nameofinput)-1] = '\0';
+    getInput(&nameofinput);
     strcpy(new_entry.state, nameofinput);
-    fflush(stdin);
 
     printf("enter last four digits of the person's phone number: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
+    getInput(&nameofinput);
     sscanf(nameofinput, "%d", &value);
     new_entry.last4digsphonenum = value;
-    fflush(stdin);
 
     fprintf(input_file, "full name,town,state,last4digsofphonenum\n");
     fprintf(input_file, "%s,%s,%s,%d\n", new_entry.name, new_entry.town, new_entry.state, new_entry.last4digsphonenum);
@@ -177,9 +167,7 @@ void importFile() {
     while (1) {
         // to do, add support for inclusions of .csv or no
         printf("enter the name of the .csv file you wish to edit\nsupported formats: asdf.csv = asdf.csv or asdf: ");
-        fgets(nameofinput, sizeof(nameofinput), stdin);
-        nameofinput[strlen(nameofinput)-1] = '\0';
-        fflush(stdin);
+        getInput(&nameofinput);
 
         strcat(nameofinput, ".csv");
 
@@ -202,25 +190,19 @@ void importFile() {
     printf("chosen file opened\n\n");
 
     printf("enter a person's first and last name: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
-    nameofinput[strlen(nameofinput)-1] = '\0';
+    getInput(&nameofinput);
     strcpy(new_entry.name, nameofinput);
-    fflush(stdin);
 
     printf("enter the person's town: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
-    nameofinput[strlen(nameofinput)-1] = '\0';
+    getInput(&nameofinput);
     strcpy(new_entry.town, nameofinput);
-    fflush(stdin);
 
     printf("enter the person's state: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
-    nameofinput[strlen(nameofinput)-1] = '\0';
+    getInput(&nameofinput);
     strcpy(new_entry.state, nameofinput);
-    fflush(stdin);
 
     printf("enter last four digits of the person's phone number: ");
-    fgets(nameofinput, sizeof(nameofinput), stdin);
+    getInput(&nameofinput);
     sscanf(nameofinput, "%d", &value);
     new_entry.last4digsphonenum = value;
 
@@ -244,4 +226,10 @@ void lookUpEntry() {
 
 void printFile() {
 
+}
+
+void getInput(char *nameofinput) {
+    fgets(nameofinput, sizeof(nameofinput), stdin);
+    nameofinput[strlen(nameofinput)-1] = '\0';
+    fflush(stdin);
 }
