@@ -110,7 +110,8 @@ void createNewFile() {
     FILE *input_file;
 
     while(1) {
-        printf("enter the name of the .csv file you wish to create, do not include the file extension: ");
+        // to do, add support for inclusions of .csv or no
+        printf("enter the name of the .csv file you wish to create\nsupported formats: asdf.csv = asdf.csv or asdf: ");
         fgets(nameofinput, sizeof(nameofinput), stdin);
         nameofinput[strlen(nameofinput)-1] = '\0';
         fflush(stdin);
@@ -174,7 +175,8 @@ void importFile() {
     FILE *input_file;
 
     while (1) {
-        printf("enter the name of the .csv file you wish to edit, do not include the file extension: ");
+        // to do, add support for inclusions of .csv or no
+        printf("enter the name of the .csv file you wish to edit\nsupported formats: asdf.csv = asdf.csv or asdf: ");
         fgets(nameofinput, sizeof(nameofinput), stdin);
         nameofinput[strlen(nameofinput)-1] = '\0';
         fflush(stdin);
