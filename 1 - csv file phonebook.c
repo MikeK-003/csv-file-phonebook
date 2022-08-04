@@ -2,8 +2,15 @@
 #include <string.h>
 #include <stdio.h>
 
+#define ARRAY_SIZE 32
+
+/*
+    this program is a database that works with .csv files
+    users have the options of creating a new entry on an existing or new file
+    as well as deleting, editing, and looking up an entry on existing files
+*/
+
 // listing all functions down here
-void getInput();
 void printStartMenu();
 void addEntry();
 void createNewFile();
@@ -12,13 +19,14 @@ void deleteEntry();
 void editEntry();
 void lookUpEntry();
 void printFile();
+void getInput();
 
 // what an entry will look like
 struct entry {
-    char name[32];
-    char town[32];
-    char state[32];
-    int last4digsphonenum;
+    char name[ARRAY_SIZE];
+    char town[ARRAY_SIZE];
+    char state[ARRAY_SIZE];
+    char last4digsphonenum[ARRAY_SIZE];
 };
 
 // print start menu
@@ -29,7 +37,7 @@ int main() {
 
 // choices presented
 void printStartMenu() {
-    char nameofinput[32];
+    char nameofinput[ARRAY_SIZE];
     int choice;
 
     printf("-------------------------------------------------\n");
@@ -71,9 +79,8 @@ void printStartMenu() {
 
 // add entry, will also use createNewFile() and importFile()
 void addEntry() {
-    char nameofinput[32];
+    char nameofinput[ARRAY_SIZE];
     char yesorno;
-    int value;
     struct entry new_entry;
 
     while (1) {
@@ -103,17 +110,20 @@ void addEntry() {
 }
 
 void createNewFile() {
-    char nameofinput[32];
-    int value;
+    char nameofinput[ARRAY_SIZE];
     struct entry new_entry;
     FILE *input_file;
 
     while(1) {
-        // to do, add support for inclusions of .csv or no
-        printf("enter the name of the .csv file you wish to create\nsupported formats: asdf.csv = asdf.csv or asdf: ");
+        printf("enter the name of the .csv file you wish to create\nexample: asdf.csv = asdf.csv or asdf: ");
         getInput(&nameofinput);
 
-        strcat(nameofinput, ".csv");
+        // if the last 4 chars of file name input = ".csv", do nothing. otherwise append ".csv" to file name input
+        if (strcmp(&nameofinput[strlen(nameofinput)-4], ".csv") == 0) {
+            // do nothing
+        } else {
+            strcat(nameofinput, ".csv");
+        }
 
         // check if file currently exists
         if (input_file = fopen(nameofinput, "r")) {
@@ -148,28 +158,31 @@ void createNewFile() {
 
     printf("enter last four digits of the person's phone number: ");
     getInput(&nameofinput);
-    sscanf(nameofinput, "%d", &value);
-    new_entry.last4digsphonenum = value;
+    strcpy(new_entry.last4digsphonenum, nameofinput);
 
     fprintf(input_file, "full name,town,state,last4digsofphonenum\n");
-    fprintf(input_file, "%s,%s,%s,%d\n", new_entry.name, new_entry.town, new_entry.state, new_entry.last4digsphonenum);
+    fprintf(input_file, "%s,%s,%s,%s\n", new_entry.name, new_entry.town, new_entry.state, new_entry.last4digsphonenum);
 
     printf("\na new entry has been added to the specified file\n");
     fclose(input_file);
 }
 
 void importFile() {
-    char nameofinput[32];
-    int value;
+    char nameofinput[ARRAY_SIZE];
     struct entry new_entry;
     FILE *input_file;
 
+
     while (1) {
-        // to do, add support for inclusions of .csv or no
-        printf("enter the name of the .csv file you wish to edit\nsupported formats: asdf.csv = asdf.csv or asdf: ");
+        printf("enter the name of the .csv file you wish to edit\nexample: asdf.csv = asdf.csv or asdf: ");
         getInput(&nameofinput);
 
-        strcat(nameofinput, ".csv");
+        // if the last 4 chars of file name input = ".csv", do nothing. otherwise append ".csv" to file name input
+        if (strcmp(&nameofinput[strlen(nameofinput)-4], ".csv") == 0) {
+            // do nothing
+        } else {
+            strcat(nameofinput, ".csv");
+        }
 
         // check if file currently exists
         if (input_file = fopen(nameofinput, "r")) {
@@ -203,17 +216,52 @@ void importFile() {
 
     printf("enter last four digits of the person's phone number: ");
     getInput(&nameofinput);
-    sscanf(nameofinput, "%d", &value);
-    new_entry.last4digsphonenum = value;
+    strcpy(new_entry.last4digsphonenum, nameofinput);
 
-    fprintf(input_file, "%s,%s,%s,%d\n", new_entry.name, new_entry.town, new_entry.state, new_entry.last4digsphonenum);
+    fprintf(input_file, "%s,%s,%s,%s\n", new_entry.name, new_entry.town, new_entry.state, new_entry.last4digsphonenum);
 
     printf("\na new entry has been added to the specified file\n");
     fclose(input_file);
 }
 
 void deleteEntry() {
+    char nameofinput[ARRAY_SIZE];
+    struct entry new_entry;
+    FILE *input_file;
 
+    while (1) {
+        printf("enter the name of the .csv file you wish to edit\nexample: asdf.csv = asdf.csv or asdf: ");
+        getInput(&nameofinput);
+
+        // if the last 4 chars of file name input = ".csv", do nothing. otherwise append ".csv" to file name input
+        if (strcmp(&nameofinput[strlen(nameofinput)-4], ".csv") == 0) {
+            // do nothing
+        } else {
+            strcat(nameofinput, ".csv");
+        }
+
+        // check if file currently exists
+        if (input_file = fopen(nameofinput, "r")) {
+            fclose(input_file);
+            input_file = fopen(nameofinput, "a");
+            break;
+        } else {
+            printf("this file is not in the directory, try again\n\n");
+            continue;
+        }
+    }
+
+    if (input_file == NULL) {
+        fprintf(stderr, "can't find the file!\n");
+        exit (8);
+    }
+
+    printf("chosen file opened\n\n");
+
+    printf("enter a single field in the entry you want to delete\nexamples: full name, town, state, phone num: ");
+    getInput(&nameofinput);
+
+    // do a for loop here to go thru file until a match is detected idk
 }
 
 void editEntry() {
@@ -229,7 +277,7 @@ void printFile() {
 }
 
 void getInput(char *nameofinput) {
-    fgets(nameofinput, sizeof(nameofinput), stdin);
+    fgets(nameofinput, ARRAY_SIZE, stdin);
     nameofinput[strlen(nameofinput)-1] = '\0';
     fflush(stdin);
 }
