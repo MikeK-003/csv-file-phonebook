@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 #define ARRAY_SIZE 32
+#define LARGE_SIZE 500
 
 /*
     this program is a database that works with .csv files
@@ -93,13 +94,13 @@ void addEntry() {
             case 'n':
             case 'N':
                 // if user does not want to add entry to existing file, call new file create func and terminate this one
-                printf("entered no, creating new .csv file...\n\n");
+                printf("entered no, creating new .csv file...\n");
                 createNewFile();
                 exit(0);
             case 'y':
             case 'Y':
                 // if user does want to add entry to existing file, call file import func and terminate this one
-                printf("entered yes, accessing current .csv files...\n\n");
+                printf("entered yes, accessing current .csv files...\n");
                 importFile();
                 exit(0);
             default:
@@ -115,7 +116,7 @@ void createNewFile() {
     FILE *input_file;
 
     while(1) {
-        printf("enter the name of the .csv file you wish to create\nexample: asdf.csv = asdf.csv or asdf: ");
+        printf("\nenter the name of the .csv file you wish to create\nexample: asdf.csv = asdf.csv or asdf: ");
         getInput(&nameofinput);
 
         // if the last 4 chars of file name input = ".csv", do nothing. otherwise append ".csv" to file name input
@@ -174,7 +175,7 @@ void importFile() {
 
 
     while (1) {
-        printf("enter the name of the .csv file you wish to edit\nexample: asdf.csv = asdf.csv or asdf: ");
+        printf("\nenter the name of the .csv file you wish to edit\nexample: asdf.csv = asdf.csv or asdf: ");
         getInput(&nameofinput);
 
         // if the last 4 chars of file name input = ".csv", do nothing. otherwise append ".csv" to file name input
@@ -225,12 +226,18 @@ void importFile() {
 }
 
 void deleteEntry() {
+    char *comparison;
+    char copyoffile[LARGE_SIZE];
+    char copyofline[ARRAY_SIZE][ARRAY_SIZE];
     char nameofinput[ARRAY_SIZE];
-    struct entry new_entry;
     FILE *input_file;
+    int ch;
+    int columncounter = 0;
+    int index = 0;
+    int rowcounter = 0;
 
     while (1) {
-        printf("enter the name of the .csv file you wish to edit\nexample: asdf.csv = asdf.csv or asdf: ");
+        printf("\nenter the name of the .csv file you wish to edit\nexample: asdf.csv = asdf.csv or asdf: ");
         getInput(&nameofinput);
 
         // if the last 4 chars of file name input = ".csv", do nothing. otherwise append ".csv" to file name input
@@ -243,7 +250,7 @@ void deleteEntry() {
         // check if file currently exists
         if (input_file = fopen(nameofinput, "r")) {
             fclose(input_file);
-            input_file = fopen(nameofinput, "a");
+            input_file = fopen(nameofinput, "r+");
             break;
         } else {
             printf("this file is not in the directory, try again\n\n");
@@ -258,10 +265,50 @@ void deleteEntry() {
 
     printf("chosen file opened\n\n");
 
-    printf("enter a single field in the entry you want to delete\nexamples: full name, town, state, phone num: ");
+    printf("enter the full name associated with the entry you want to delete: ");
     getInput(&nameofinput);
 
-    // do a for loop here to go thru file until a match is detected idk
+    // the idea behind the while loop below is as follows:
+    // go through the entire file. have a 2d array to save each line of the file.
+    // ideally, copyofline[0] is the entire first line of file, copyofline[1] is the second, and so on
+    // then, rewind to the start of the file and begin printing out each copyofline[i] to a new file
+    // if the line containing the name of the entry we want to delete is reached, do i++ to skip that line.
+    // save the new file under the name of the old one and presto, file without said entry
+    // the only problem is i can't do the first step in this.
+
+    // copies entire file and keeps track of lines
+    while (1) {
+        ch = fgetc(input_file);
+        copyoffile[index] = (char)ch;
+        
+        // while the current char isn't a newline...
+        while (ch != '\n') {
+            // ...have the 2d array fill up the columns (horizontal)
+            copyofline[columncounter][rowcounter] = (char)ch;
+            columncounter++;
+
+            // when a newline is reached...
+            if (ch == '\n') {
+                // ...reset the columncounter (horizontal) and increment the rowcounter (vertical) by 1.
+                // continue from top of while loop
+                columncounter = 0;
+                rowcounter++;
+                continue;
+            } else if (ch == EOF) {
+                copyoffile[strlen(copyoffile)-1] = '\0';
+                break;
+                // i merged the break in this second while loop since the logic above can't normally exit on its own
+            }
+        }
+    }
+
+    // this entire thing results in a core dump
+
+    printf("test: file is:\n%s\n", copyoffile);
+    printf("test: line 1 is:\n%s\n", copyofline[0]);
+    printf("test: line 2 is:\n%s\n", copyofline[1]);
+
+    fclose(input_file);
 }
 
 void editEntry() {
