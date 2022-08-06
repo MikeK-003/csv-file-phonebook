@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #define ARRAY_SIZE 32
-#define LARGE_SIZE 64
+#define LARGE_SIZE 500
 
 /*
     this program is a database that works with .csv files
@@ -173,7 +173,6 @@ void importFile() {
     struct entry new_entry;
     FILE *input_file;
 
-
     while (1) {
         printf("\nenter the name of the .csv file you wish to edit\nexample: asdf.csv = asdf.csv or asdf: ");
         getInput(&nameofinput);
@@ -306,11 +305,111 @@ void editEntry() {
 }
 
 void lookUpEntry() {
+    char copyofline[ARRAY_SIZE][LARGE_SIZE];
+    char nameofinput[ARRAY_SIZE];
+    FILE *input_file;
+    int index = 0;
+    int linecounter = 0;
 
+    while (1) {
+        printf("\nenter the name of the .csv file you wish to search\nexample: asdf.csv = asdf.csv or asdf: ");
+        getInput(&nameofinput);
+
+        // if the last 4 chars of file name input = ".csv", do nothing. otherwise append ".csv" to file name input
+        if (strcmp(&nameofinput[strlen(nameofinput)-4], ".csv") == 0) {
+            // do nothing
+        } else {
+            strcat(nameofinput, ".csv");
+        }
+
+        // check if file currently exists
+        if (input_file = fopen(nameofinput, "r")) {
+            fclose(input_file);
+            input_file = fopen(nameofinput, "r+");
+            break;
+        } else {
+            printf("this file is not in the directory, try again\n\n");
+            continue;
+        }
+    }
+
+    if (input_file == NULL) {
+        fprintf(stderr, "can't find the file!\n");
+        exit (8);
+    }
+
+    printf("chosen file opened\n\n");
+
+    printf("enter the full name associated with the entry you want to look up: ");
+    getInput(&nameofinput);
+
+    while (fgets(copyofline[linecounter], LARGE_SIZE, input_file) != NULL) {      
+        linecounter++;
+    }
+
+    while (1) {
+        if (strstr(copyofline[index], nameofinput)) {
+            printf("\nthe following entry is associated with the inputted name\n%s\n", copyofline[index]);
+            break;
+        } else {
+            index++;
+        }
+    }
+
+    fclose(input_file);
 }
 
 void printFile() {
+    char copyoffile[LARGE_SIZE];
+    char nameofinput[ARRAY_SIZE];
+    FILE *input_file;
+    int ch;
+    int index = 0;
 
+    while (1) {
+        printf("\nenter the name of the .csv file you wish to print\nexample: asdf.csv = asdf.csv or asdf: ");
+        getInput(&nameofinput);
+
+        // if the last 4 chars of file name input = ".csv", do nothing. otherwise append ".csv" to file name input
+        if (strcmp(&nameofinput[strlen(nameofinput)-4], ".csv") == 0) {
+            // do nothing
+        } else {
+            strcat(nameofinput, ".csv");
+        }
+
+        // check if file currently exists
+        if (input_file = fopen(nameofinput, "r")) {
+            fclose(input_file);
+            input_file = fopen(nameofinput, "r+");
+            break;
+        } else {
+            printf("this file is not in the directory, try again\n\n");
+            continue;
+        }
+    }
+
+    if (input_file == NULL) {
+        fprintf(stderr, "can't find the file!\n");
+        exit (8);
+    }
+
+    printf("chosen file opened\n\n");
+
+    while (1) {
+        ch = fgetc(input_file);
+        copyoffile[index] = (char)ch;
+        index++;
+
+        if (ch == EOF) {
+            copyoffile[strlen(copyoffile)-1] = '\0';
+            copyoffile[strlen(copyoffile)-2] = '\0';
+            break;
+        }
+    }
+
+    printf("file contents:\n%s\n", copyoffile);
+
+    fclose(input_file);
 }
 
 void getInput(char *nameofinput) {
