@@ -227,6 +227,7 @@ void importFile() {
 
 void deleteEntry() {
     char copyofline[ARRAY_SIZE][LARGE_SIZE];
+    char nameoffile[ARRAY_SIZE];
     char nameofinput[ARRAY_SIZE];
     FILE *input_file;
     int index = 0;
@@ -234,19 +235,19 @@ void deleteEntry() {
 
     while (1) {
         printf("\nenter the name of the .csv file you wish to edit\nexample: asdf.csv = asdf.csv or asdf: ");
-        getInput(&nameofinput);
+        getInput(&nameoffile);
 
         // if the last 4 chars of file name input = ".csv", do nothing. otherwise append ".csv" to file name input
-        if (strcmp(&nameofinput[strlen(nameofinput)-4], ".csv") == 0) {
+        if (strcmp(&nameoffile[strlen(nameoffile)-4], ".csv") == 0) {
             // do nothing
         } else {
-            strcat(nameofinput, ".csv");
+            strcat(nameoffile, ".csv");
         }
 
         // check if file currently exists
-        if (input_file = fopen(nameofinput, "r")) {
+        if (input_file = fopen(nameoffile, "r")) {
             fclose(input_file);
-            input_file = fopen(nameofinput, "r+");
+            input_file = fopen(nameoffile, "r+");
             break;
         } else {
             printf("this file is not in the directory, try again\n\n");
@@ -270,18 +271,30 @@ void deleteEntry() {
     // when the specific line containing the inputted name is reached, increment X by 1 to skip it
 
     // firstly, divide text file into individual lines, note that each line has a newline at the end
-    while (fgets(copyofline[linecounter], LARGE_SIZE, input_file) != NULL) {
-        printf("this is line %d: %s", linecounter, copyofline[linecounter]);        
+    while (fgets(copyofline[linecounter], LARGE_SIZE, input_file) != NULL) {      
         linecounter++;
     }
 
-    // then obtain line num of entry we want deleted
+    // then obtain line num of entry we want deleted, no.index
     while (1) {
         if (strstr(copyofline[index], nameofinput)) {
             printf("\nthe following entry will be deleted\nline %d: %s\n", index, copyofline[index]);
             break;
         } else {
             index++;
+        }
+    }
+
+    // next start re-printing file
+    fclose(input_file);
+    input_file = fopen(nameoffile, "w");
+
+    for (int i = 0; i < linecounter; i++) {
+        fprintf(input_file, "%s", copyofline[i]);
+
+        // lastly, when we arrive at line no.index, skip it
+        if (i == (index - 1)) {
+            i++;
         }
     }
 
