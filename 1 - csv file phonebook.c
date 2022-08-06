@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #define ARRAY_SIZE 32
-#define LARGE_SIZE 100
+#define LARGE_SIZE 64
 
 /*
     this program is a database that works with .csv files
@@ -270,18 +270,21 @@ void deleteEntry() {
     // when the specific line containing the inputted name is reached, increment X by 1 to skip it
 
     // firstly, divide text file into individual lines, note that each line has a newline at the end
-    while (1) {
-        fgets(copyofline[linecounter], LARGE_SIZE, input_file);
-        printf("this is line %d: %s", linecounter, copyofline[linecounter]);
+    while (fgets(copyofline[linecounter], LARGE_SIZE, input_file) != NULL) {
+        printf("this is line %d: %s", linecounter, copyofline[linecounter]);        
         linecounter++;
-        
-        if (fgets(copyofline[linecounter], LARGE_SIZE, input_file) == NULL) {
+    }
+
+    // then obtain line num of entry we want deleted
+    while (1) {
+        if (strstr(copyofline[index], nameofinput)) {
+            printf("\nthe following entry will be deleted\nline %d: %s\n", index, copyofline[index]);
             break;
+        } else {
+            index++;
         }
     }
-    
-    // the above code completely ignores the second line of any given file for some reason
-    
+
     fclose(input_file);
 }
 
