@@ -3,7 +3,7 @@
 #include <stdio.h>
 
 #define ARRAY_SIZE 32
-#define LARGE_SIZE 500
+#define LARGE_SIZE 100
 
 /*
     this program is a database that works with .csv files
@@ -226,15 +226,11 @@ void importFile() {
 }
 
 void deleteEntry() {
-    char *comparison;
-    char copyoffile[LARGE_SIZE];
-    char copyofline[ARRAY_SIZE][ARRAY_SIZE];
+    char copyofline[ARRAY_SIZE][LARGE_SIZE];
     char nameofinput[ARRAY_SIZE];
     FILE *input_file;
-    int ch;
-    int columncounter = 0;
     int index = 0;
-    int rowcounter = 0;
+    int linecounter = 0;
 
     while (1) {
         printf("\nenter the name of the .csv file you wish to edit\nexample: asdf.csv = asdf.csv or asdf: ");
@@ -268,46 +264,24 @@ void deleteEntry() {
     printf("enter the full name associated with the entry you want to delete: ");
     getInput(&nameofinput);
 
-    // the idea behind the while loop below is as follows:
-    // go through the entire file. have a 2d array to save each line of the file.
-    // ideally, copyofline[0] is the entire first line of file, copyofline[1] is the second, and so on
-    // then, rewind to the start of the file and begin printing out each copyofline[i] to a new file
-    // if the line containing the name of the entry we want to delete is reached, do i++ to skip that line.
-    // save the new file under the name of the old one and presto, file without said entry
-    // the only problem is i can't do the first step in this.
+    // use fgets to read each line to do the first step and save each line as copyofline[X]
+    // detect the specific line that contains the input. note the line number of the entry
+    // from there, begin printing out each copyofline[X]
+    // when the specific line containing the inputted name is reached, increment X by 1 to skip it
 
-    // copies entire file and keeps track of lines
+    // firstly, divide text file into individual lines, note that each line has a newline at the end
     while (1) {
-        ch = fgetc(input_file);
-        copyoffile[index] = (char)ch;
+        fgets(copyofline[linecounter], LARGE_SIZE, input_file);
+        printf("this is line %d: %s", linecounter, copyofline[linecounter]);
+        linecounter++;
         
-        // while the current char isn't a newline...
-        while (ch != '\n') {
-            // ...have the 2d array fill up the columns (horizontal)
-            copyofline[columncounter][rowcounter] = (char)ch;
-            columncounter++;
-
-            // when a newline is reached...
-            if (ch == '\n') {
-                // ...reset the columncounter (horizontal) and increment the rowcounter (vertical) by 1.
-                // continue from top of while loop
-                columncounter = 0;
-                rowcounter++;
-                continue;
-            } else if (ch == EOF) {
-                copyoffile[strlen(copyoffile)-1] = '\0';
-                break;
-                // i merged the break in this second while loop since the logic above can't normally exit on its own
-            }
+        if (fgets(copyofline[linecounter], LARGE_SIZE, input_file) == NULL) {
+            break;
         }
     }
-
-    // this entire thing results in a core dump
-
-    printf("test: file is:\n%s\n", copyoffile);
-    printf("test: line 1 is:\n%s\n", copyofline[0]);
-    printf("test: line 2 is:\n%s\n", copyofline[1]);
-
+    
+    // the above code completely ignores the second line of any given file for some reason
+    
     fclose(input_file);
 }
 
