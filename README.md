@@ -1,4 +1,4 @@
-# ubiquitous-garbanzo
+# csv-file-phonebook
 
 This is my first personal project - a single program that will save information about a person to a .csv file.
 
